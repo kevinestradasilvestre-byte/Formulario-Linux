@@ -1,0 +1,726 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,skins}
+
+\geometry{a4paper, margin=1in}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{titlebg}{rgb}{0.1,0.3,0.5}
+\definecolor{lightblue}{rgb}{0.9,0.95,1}
+\definecolor{lightgreen}{rgb}{0.9,1,0.95}
+\definecolor{lightyellow}{rgb}{1,1,0.9}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\newtcblisting{codeblock}[1][]{
+  listing only,
+  colback=lightblue!20,
+  colframe=titlebg,
+  title=#1,
+  enhanced,
+  listing options={style=mystyle, language=bash}
+}
+
+\newtcolorbox{errorbox}[1][]{
+  colback=lightyellow!20,
+  colframe=titlebg,
+  title=#1,
+  enhanced
+}
+
+\title{\textcolor{titlebg}{\textbf{Guía Maestra de Administración y Scripting en Linux}}}
+\author{Kevin B.}
+\date{Febrero 2026}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\textcolor{titlebg}{Guía Maestra de Administración y Scripting en Linux}}
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\section{Objetivo}
+
+Desarrollar un manual técnico integral que sirva como bitácora de aprendizaje y consulta rápida sobre el uso de la terminal, gestión de archivos y automatización mediante Shell Scripting en Linux. Este manual se basa en las instrucciones de la tarea, extendido con contenido de tutoriales educativos como el tutorial0 de Sistemas Operativos (Fing, Udelar), "Linux de docente manual" para conceptos multiusuario, shells y características generales, "Linux librito" para distribuciones, sistema de archivos y permisos, y "FORMULARIO DE LINUX" para comandos avanzados como grep, find, sort, cut, paste, tr. El documento está dividido en cinco secciones, con descripciones, ejemplos y errores comunes para cada comando, asegurando una cobertura completa.
+
+\newpage
+
+\section{Sección I: Comandos Básicos (Navegación y Archivos)}
+
+Los comandos básicos son la base para interactuar con el sistema de archivos en Linux. El filesystem es jerárquico, comenzando desde la raíz (/), con directorios estándar como /bin, /etc, /home, /usr y /var para logs.
+
+\subsection{Gestión de Directorios}
+
+Los comandos de gestión de directorios permiten navegar, crear y examinar la estructura de carpetas. Extendida con rmdir, tree, du, df, como en tutoriales de Fing.
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+ls & Lista el contenido de un directorio. Qué es: Comando para ver archivos y subdirectorios. Qué hace: Muestra lista con opciones para detalles. \\
+   & Ejemplo 1: \lstinline{ls -l} - Lista detallada con permisos, tamaño y fecha. \\
+   & Ejemplo 2: \lstinline{ls -a /home} - Muestra archivos ocultos. \\
+   & Ejemplo 3: \lstinline{ls -lh /var/log} - Tamaños legibles en logs. \\
+   & Ejemplo 4: \lstinline{ls [iI]*} - Archivos empezando con i o I (comodines como en tutorial0). \\
+   & Ejemplo 5: \lstinline{ls /usr/bin} - Lista ejecutables. \\
+   & Error común: "ls: cannot access 'dir': No such file or directory" - Identificar: Mensaje directo. Solución: Verificar ruta con pwd. \\
+\midrule
+cd & Cambia el directorio actual. Qué es: Navegador de carpetas. Qué hace: Mueve el usuario por la jerarquía. \\
+   & Ejemplo 1: \lstinline{cd /etc} - Cambia a configuraciones. \\
+   & Ejemplo 2: \lstinline{cd ~} - Regresa a home. \\
+   & Ejemplo 3: \lstinline{cd ..} - Sube un nivel. \\
+   & Ejemplo 4: \lstinline{cd -} - Regresa al anterior. \\
+   & Ejemplo 5: \lstinline{cd /tmp} - Cambia a temporales (como en tutorial0). \\
+   & Error común: "cd: no such file or directory" - Identificar: Mensaje "no such". Solución: Usar ls para verificar. \\
+\midrule
+mkdir & Crea un nuevo directorio. Qué es: Creador de carpetas. Qué hace: Crea estructuras anidadas si se usa -p. \\
+   & Ejemplo 1: \lstinline{mkdir nuevo_dir} - Crea en actual. \\
+   & Ejemplo 2: \lstinline{mkdir -p ruta/larga/nuevo} - Anidados. \\
+   & Ejemplo 3: \lstinline{mkdir -m 755 public_dir} - Con permisos. \\
+   & Ejemplo 4: \lstinline{mkdir prog_dir} - Para proyectos (tutorial0). \\
+   & Ejemplo 5: \lstinline{mkdir {dir1,dir2}} - Múltiples. \\
+   & Error común: "mkdir: cannot create directory 'dir': Permission denied" - Identificar: "denied". Solución: sudo. \\
+\midrule
+pwd & Imprime el directorio actual. Qué es: Indicador de ubicación. Qué hace: Muestra ruta absoluta. \\
+   & Ejemplo 1: \lstinline{pwd} - Ruta actual. \\
+   & Ejemplo 2: \lstinline{echo "Estás en: $(pwd)"} - En mensaje. \\
+   & Ejemplo 3: \lstinline{pwd > location.txt} - Guarda en archivo. \\
+   & Error común: Ninguno típico, pero confusiones con rutas relativas - Solución: Usar rutas absolutas. \\
+\midrule
+rmdir & Elimina directorio vacío. Qué es: Borrador de carpetas. Qué hace: Borra vacías, -p para anidadas. \\
+   & Ejemplo 1: \lstinline{rmdir viejo_dir} - Simple. \\
+   & Ejemplo 2: \lstinline{rmdir -p ruta/larga/vacio} - Padres vacíos. \\
+   & Ejemplo 3: \lstinline{rmdir prog_dir} - Vacío (tutorial0). \\
+   & Error común: "rmdir: failed to remove 'dir': Directory not empty" - Identificar: "not empty". Solución: Vaciar con rm o usar rm -r. \\
+\midrule
+tree & Muestra estructura en árbol. Qué es: Visualizador jerárquico. Qué hace: Muestra árbol de directorios. \\
+   & Ejemplo 1: \lstinline{tree /home} - Árbol de home. \\
+   & Ejemplo 2: \lstinline{tree -L 2 .} - Limita profundidad. \\
+   & Ejemplo 3: \lstinline{tree -d /etc} - Solo directorios. \\
+   & Error común: "tree: command not found" - Identificar: "not found". Solución: sudo apt install tree. \\
+\midrule
+du & Calcula uso de disco. Qué es: Medidor de espacio. Qué hace: Muestra tamaño de directorios. \\
+   & Ejemplo 1: \lstinline{du -sh /home} - Resumido humano. \\
+   & Ejemplo 2: \lstinline{du -h --max-depth=1 /var} - Nivel 1. \\
+   & Ejemplo 3: \lstinline{du -sh * | sort -h} - Ordenado por tamaño. \\
+   & Error común: Ejecución lenta - Identificar: Demora. Solución: Limitar con --max-depth. \\
+\midrule
+df & Muestra espacio en discos. Qué es: Monitor de almacenamiento. Qué hace: Muestra disponible/usado. \\
+   & Ejemplo 1: \lstinline{df -h} - Legible humano. \\
+   & Ejemplo 2: \lstinline{df -T /} - Con tipos de filesystem. \\
+   & Ejemplo 3: \lstinline{df -i} - Inodos. \\
+   & Error común: "No space left on device" - Identificar: Uso 100%. Solución: Limpiar con du y rm. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+
+\subsection{Manipulación de Archivos}
+
+Comandos para crear, copiar, mover y eliminar archivos. Extendida con ln, echo, file, diff (de tutorial0).
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+cp & Copia archivos o directorios. Qué es: Duplicador de datos. Qué hace: Crea copias, -r para recursivo. \\
+   & Ejemplo 1: \lstinline{cp file.txt copia.txt} - Copia simple. \\
+   & Ejemplo 2: \lstinline{cp -r dir /backup} - Recursiva. \\
+   & Ejemplo 3: \lstinline{cp foo foo.backup} - Backup (tutorial0). \\
+   & Ejemplo 4: \lstinline{cp -p file preserved.txt} - Preserva timestamps. \\
+   & Ejemplo 5: \lstinline{cp -r /usr/src/linux /tmp} - Copia grande. \\
+   & Error común: "cp: omitting directory 'dir'" - Identificar: "omitting". Solución: -r para directorios. \\
+\midrule
+mv & Mueve o renombra. Qué es: Reubicador. Qué hace: Mueve archivos o cambia nombre. \\
+   & Ejemplo 1: \lstinline{mv viejo.txt nuevo.txt} - Renombra. \\
+   & Ejemplo 2: \lstinline{mv file.txt /otro/dir/} - Mueve. \\
+   & Ejemplo 3: \lstinline{mv a.out prog1} - Renombra ejecutable (tutorial0). \\
+   & Ejemplo 4: \lstinline{mv -b file existing} - Backup si existe. \\
+   & Ejemplo 5: \lstinline{mv *.c /src} - Múltiples. \\
+   & Error común: "mv: cannot stat 'file': No such file or directory" - Identificar: "cannot stat". Solución: ls para verificar. \\
+\midrule
+rm & Elimina archivos o directorios. Qué es: Borrador. Qué hace: Borra permanentemente. \\
+   & Ejemplo 1: \lstinline{rm file.txt} - Archivo. \\
+   & Ejemplo 2: \lstinline{rm -r dir} - Recursivo. \\
+   & Ejemplo 3: \lstinline{rm -rf prog_dir} - Forzado (tutorial0). \\
+   & Ejemplo 4: \lstinline{rm -i *.tmp} - Interactivo. \\
+   & Ejemplo 5: \lstinline{rm -r /tmp/cache} - Limpia cache. \\
+   & Error común: "rm: remove write-protected regular file 'file'?" - Identificar: "write-protected". Solución: -f. \\
+\midrule
+touch & Crea vacío o actualiza timestamp. Qué es: Timestamp modifier. Qué hace: Crea o actualiza fecha. \\
+   & Ejemplo 1: \lstinline{touch nuevo.txt} - Crea vacío. \\
+   & Ejemplo 2: \lstinline{touch -d "2023-01-01" file} - Cambia fecha. \\
+   & Ejemplo 3: \lstinline{touch -r ref file} - Copia timestamp. \\
+   & Error común: "touch: cannot touch 'file': Permission denied" - Identificar: "denied". Solución: sudo. \\
+\midrule
+cat & Concatena y muestra archivos. Qué es: Visualizador/concatenador. Qué hace: Muestra contenido o une archivos. \\
+   & Ejemplo 1: \lstinline{cat file.txt} - Muestra. \\
+   & Ejemplo 2: \lstinline{cat f1.txt f2.txt > combined.txt} - Combina. \\
+   & Ejemplo 3: \lstinline{cat /etc/passwd} - Muestra usuarios (tutorial0). \\
+   & Ejemplo 4: \lstinline{cat -n log.txt} - Numera líneas. \\
+   & Ejemplo 5: \lstinline{cat > nuevo.txt} - Crea desde input. \\
+   & Error común: "cat: file: No such file or directory" - Identificar: "no such". Solución: Corregir ruta. \\
+\midrule
+ln & Crea enlaces. Qué es: Linker. Qué hace: Crea duros o simbólicos. \\
+   & Ejemplo 1: \lstinline{ln -s /ruta/original enlace} - Simbólico. \\
+   & Ejemplo 2: \lstinline{ln file hardlink} - Duro. \\
+   & Ejemplo 3: \lstinline{ln -s /users/mike/.profile .} - Enlace a profile (tutorial0). \\
+   & Error común: "ln: failed to create symbolic link 'link': File exists" - Identificar: "exists". Solución: -f. \\
+\midrule
+echo & Imprime texto o variables. Qué es: Output simple. Qué hace: Muestra mensajes. \\
+   & Ejemplo 1: \lstinline{echo "Hola Mundo"} - Simple. \\
+   & Ejemplo 2: \lstinline{echo $PATH} - Variable. \\
+   & Ejemplo 3: \lstinline{echo -e "Línea1\nLínea2"} - Escapes. \\
+   & Error común: Variables no expanden - Identificar: Literal. Solución: Comillas dobles. \\
+\midrule
+file & Determina tipo de archivo. Qué es: Detector de tipo. Qué hace: Identifica formato. \\
+   & Ejemplo 1: \lstinline{file documento.txt} - Tipo texto. \\
+   & Ejemplo 2: \lstinline{file -b image.jpg} - Breve. \\
+   & Error común: "file: No such file or directory" - Identificar: "no such". Solución: Corregir ruta. \\
+\midrule
+diff & Compara archivos. Qué es: Comparador. Qué hace: Muestra diferencias. \\
+   & Ejemplo 1: \lstinline{diff file1 file2} - Diferencias. \\
+   & Ejemplo 2: \lstinline{diff foo.c newfoo.c} - Código fuente (tutorial0). \\
+   & Ejemplo 3: \lstinline{diff -u old new} - Formato unificado. \\
+   & Error común: "diff: file1: No such file or directory" - Solución: Verificar existencia. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+
+\subsection{Ayuda y Manuales}
+
+Comandos para obtener documentación. Extendida con info, apropos, whatis.
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+man & Muestra manual. Qué es: Documentación detallada. Qué hace: Muestra páginas de manual. \\
+   & Ejemplo 1: \lstinline{man ls} - Manual ls. \\
+   & Ejemplo 2: \lstinline{man -k directory} - Busca relacionados. \\
+   & Ejemplo 3: \lstinline{man -s 5 passwd} - Sección 5. \\
+   & Ejemplo 4: \lstinline{man chmod} - Permisos (tutorial0). \\
+   & Error común: "No manual entry" - Identificar: "no entry". Solución: Instalar manpages o actualizar db. \\
+\midrule
+help & Ayuda para builtins Bash. Qué es: Ayuda interna. Qué hace: Muestra uso. \\
+   & Ejemplo 1: \lstinline{help cd} - Ayuda cd. \\
+   & Ejemplo 2: \lstinline{help -d echo} - Descripción corta. \\
+   & Error común: "no help topics match" - Solución: Usar man para externos. \\
+\midrule
+info & Manuales hipertexto. Qué es: Documentación avanzada. Qué hace: Navegación interactiva. \\
+   & Ejemplo 1: \lstinline{info ls} - Info ls. \\
+   & Ejemplo 2: \lstinline{info -k keyword} - Busca. \\
+   & Error común: Navegación confusa - Solución: h para ayuda. \\
+\midrule
+apropos & Busca en descripciones. Qué es: Buscador de manuales. Qué hace: Encuentra comandos relacionados. \\
+   & Ejemplo 1: \lstinline{apropos directory} - Relacionados. \\
+   & Ejemplo 2: \lstinline{apropos -r "list.*"} - Regex. \\
+   & Error común: "nothing appropriate" - Solución: sudo mandb. \\
+\midrule
+whatis & Descripción breve. Qué es: Resumen rápido. Qué hace: Una línea de desc. \\
+   & Ejemplo 1: \lstinline{whatis ls} - Breve ls. \\
+   & Ejemplo 2: \lstinline{whatis -w cd*} - Wildcard. \\
+   & Error común: "nothing appropriate" - Solución: mandb. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Editores de Texto (Extendido con vi, como en tutorial0)}
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+vi & Editor modal de texto. Qué es: Editor vi (vim mejorado). Qué hace: Edita archivos en modos comando/inserción. \\
+   & Ejemplo 1: \lstinline{vi file.txt} - Abrir archivo. \\
+   & Ejemplo 2: \lstinline{vi +/pattern file} - Buscar patrón. \\
+   & Ejemplo 3: \lstinline{vi .profile} - Editar profile (tutorial0). \\
+   & Ejemplo 4: \lstinline{vi -r file} - Recuperar sesión. \\
+   & Error común: Stuck in modo - Identificar: No inserta texto. Solución: Esc para comando, i para inserción. \\
+\midrule
+nano & Editor simple. Qué es: Editor amigable. Qué hace: Edita sin modos. \\
+   & Ejemplo 1: \lstinline{nano file.txt} - Editar. \\
+   & Ejemplo 2: \lstinline{nano -w file} - Sin wrap. \\
+   & Error común: "Permission denied" - Solución: sudo nano. \\
+\midrule
+less & Visualizador paginado. Qué es: Lector de archivos. Qué hace: Muestra contenido paginado. \\
+   & Ejemplo 1: \lstinline{less muy_largo.c} - Ver archivo largo (tutorial0). \\
+   & Ejemplo 2: \lstinline{less +/patrón file} - Buscar. \\
+   & Error común: Salir - Solución: q. \\
+\midrule
+more & Visualizador simple. Qué es: Pager básico. Qué hace: Muestra paginado. \\
+   & Ejemplo 1: \lstinline{more file.txt} - Ver. \\
+   & Ejemplo 2: \lstinline{ls | more} - Lista larga. \\
+   & Error común: Avanzar - Solución: Espacio. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+
+\section{Sección II: Comandos Avanzados (Sistema y Filtros)}
+
+Comandos para manejo avanzado del sistema, inspirados en tutorial0 con permisos, procesos, grep en filtros.
+
+\subsection{Permisos y Dueños}
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+chmod & Cambia permisos. Qué es: Modificador de accesos. Qué hace: Asigna r/w/x. \\
+   & Ejemplo 1: \lstinline{chmod +x miscript} - Ejecutable (tutorial0). \\
+   & Ejemplo 2: \lstinline{chmod 666 creditos.tex} - Lectura/escritura para todos (tutorial0). \\
+   & Ejemplo 3: \lstinline{chmod -R 755 /web} - Recursivo. \\
+   & Ejemplo 4: \lstinline{chmod a+w archivo} - Añade escritura a todos. \\
+   & Error común: "invalid mode" - Identificar: Mensaje. Solución: Usar octal (e.g., 644 = rw-r--r--). \\
+\midrule
+chown & Cambia dueño/grupo. Qué es: Propietario changer. Qué hace: Asigna nuevo dueño. \\
+   & Ejemplo 1: \lstinline{chown nobody miscript} - Cambia a nobody (tutorial0). \\
+   & Ejemplo 2: \lstinline{chown -R user:group dir} - Recursivo. \\
+   & Error común: "operation not permitted" - Identificar: "not permitted". Solución: sudo. \\
+\midrule
+chgrp & Cambia grupo. Qué es: Grupo changer. Qué hace: Asigna nuevo grupo. \\
+   & Ejemplo 1: \lstinline{chgrp group file} - Cambia grupo. \\
+   & Ejemplo 2: \lstinline{chgrp -R group dir} - Recursivo. \\
+   & Error común: "invalid group" - Identificar: "invalid". Solución: Ver /etc/group. \\
+\midrule
+umask & Máscara default. Qué es: Default permissions. Qué hace: Define permisos iniciales. \\
+   & Ejemplo 1: \lstinline{umask 022} - Típico. \\
+   & Ejemplo 2: \lstinline{umask} - Muestra. \\
+   & Error común: Permisos inesperados - Identificar: Archivos no tienen permisos deseados. Solución: Calcular 777 - umask para dirs. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+
+\subsection{Filtros y Tuberías}
+
+Herramientas para procesar texto. Extendida con uniq, cut, awk, sed, como en tutorial0 con grep, diff, head, tail.
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+grep & Busca patrones. Qué es: Buscador de texto. Qué hace: Filtra líneas con patrón. \\
+   & Ejemplo 1: \lstinline{grep mike /etc/passwd} - Busca mike (tutorial0). \\
+   & Ejemplo 2: \lstinline{grep -r "error" /var/log} - Recursivo en logs. \\
+   & Ejemplo 3: \lstinline{grep -i "texto" file} - Ignore case. \\
+   & Ejemplo 4: \lstinline{grep "expr" archivos} - En múltiples (tutorial0). \\
+   & Error común: No coincidencias - Identificar: Salida vacía. Solución: -v para invertir o ajustar patrón. \\
+\midrule
+find & Busca archivos. Qué es: Buscador avanzado. Qué hace: Encuentra por nombre, tamaño, etc. \\
+   & Ejemplo 1: \lstinline{find . -name "*.c"} - Archivos C. \\
+   & Ejemplo 2: \lstinline{find / -size +100M} - Grandes. \\
+   & Ejemplo 3: \lstinline{find . -exec grep "pat" {} \;} - Busca dentro. \\
+   & Error común: "paths must precede expression" - Identificar: Mensaje. Solución: Orden correcto. \\
+\midrule
+head & Primeras líneas. Qué es: Visualizador inicio. Qué hace: Muestra comienzo de archivo. \\
+   & Ejemplo 1: \lstinline{head prog1.c} - Inicio código (tutorial0). \\
+   & Ejemplo 2: \lstinline{head -n 5 file} - 5 líneas. \\
+   & Ejemplo 3: \lstinline{head -c 100 file} - Bytes. \\
+   & Error común: "cannot open" - Identificar: "cannot". Solución: Ruta correcta. \\
+\midrule
+tail & Últimas líneas. Qué es: Visualizador final. Qué hace: Muestra final de archivo. \\
+   & Ejemplo 1: \lstinline{tail prog1.c} - Final código (tutorial0). \\
+   & Ejemplo 2: \lstinline{tail -n 10 log.txt} - 10 líneas. \\
+   & Ejemplo 3: \lstinline{tail -f /var/log/syslog} - Seguimiento. \\
+   & Error común: Interrupción - Identificar: No responde. Solución: Ctrl+C. \\
+\midrule
+sort & Ordena líneas. Qué es: Ordenador texto. Qué hace: Ordena alfabético/numérico. \\
+   & Ejemplo 1: \lstinline{sort lista.txt} - Alfabético. \\
+   & Ejemplo 2: \lstinline{sort -n numeros.txt} - Numérico. \\
+   & Ejemplo 3: \lstinline{sort -k 2 file.csv} - Por columna 2. \\
+   & Error común: Orden inesperado - Identificar: Salida equivocada. Solución: -k o -r. \\
+\midrule
+wc & Cuenta líneas/palabras. Qué es: Contador texto. Qué hace: Cuenta elementos. \\
+   & Ejemplo 1: \lstinline{wc -l file.txt} - Líneas. \\
+   & Ejemplo 2: \lstinline{wc -w log.txt} - Palabras. \\
+   & Error común: Contar dirs - Identificar: Mensaje. Solución: Usar con find -type f. \\
+\midrule
+uniq & Elimina duplicados. Qué es: Eliminador duplicados. Qué hace: Limpia líneas adyacentes. \\
+   & Ejemplo 1: \lstinline{sort file | uniq} - Únicas. \\
+   & Ejemplo 2: \lstinline{uniq -c file} - Cuenta. \\
+   & Error común: No elimina - Identificar: Duplicados persisten. Solución: Sort primero. \\
+\midrule
+cut & Extrae campos. Qué es: Extractor. Qué hace: Corta columnas. \\
+   & Ejemplo 1: \lstinline{cut -d: -f1 /etc/passwd} - Usuarios. \\
+   & Ejemplo 2: \lstinline{cut -c1-10 file} - Caracteres. \\
+   & Error común: Delimitador equivocado - Identificar: Salida mala. Solución: Verificar delimitador. \\
+\midrule
+awk & Procesador patrones. Qué es: Manipulador texto. Qué hace: Procesa columnas. \\
+   & Ejemplo 1: \lstinline{awk '{print $1}' file} - Primera columna. \\
+   & Ejemplo 2: \lstinline{awk '/pat/ {print}' log} - Filtrar. \\
+   & Error común: "syntax error" - Identificar: Mensaje. Solución: Comprobar comillas. \\
+\midrule
+sed & Editor flujo. Qué es: Editor automatizado. Qué hace: Reemplaza/borra en flujo. \\
+   & Ejemplo 1: \lstinline{sed 's/old/new/g' file} - Reemplaza. \\
+   & Ejemplo 2: \lstinline{sed -i '1d' file} - Borra línea 1. \\
+   & Error común: "-i may not be used with stdin" - Identificar: Mensaje. Solución: Temp file. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+
+\subsection{Procesos y Red}
+
+Gestión de procesos y red básica. Extendida con pkill, pgrep, htop, ping, ss, ip, at, kill (de tutorial0).
+
+\begin{longtable}{p{3cm} p{10cm}}
+\toprule
+Comando & Descripción, qué hace, ejemplos prácticos y errores comunes \\
+\midrule
+top & Monitor interactivo de procesos. Qué es: Visualizador real-time. Qué hace: Muestra CPU/mem/procesos. \\
+   & Ejemplo 1: \lstinline{top} - Vista general. \\
+   & Ejemplo 2: \lstinline{top -u user} - Procesos de user. \\
+   & Ejemplo 3: \lstinline{top -p PID} - Específico. \\
+   & Error común: Salir - Identificar: No responde. Solución: q. \\
+\midrule
+ps & Lista procesos. Qué es: Listador. Qué hace: Muestra ejecutando. \\
+   & Ejemplo 1: \lstinline{ps -ux} - Procesos user (tutorial0). \\
+   & Ejemplo 2: \lstinline{ps aux} - Todos. \\
+   & Ejemplo 3: \lstinline{ps -ef | grep proc} - Filtrado. \\
+   & Error común: Demasiada salida - Identificar: Largo. Solución: | less. \\
+\midrule
+kill & Envía señales a procesos. Qué es: Terminador. Qué hace: Mata o señala. \\
+   & Ejemplo 1: \lstinline{kill PID} - Termina. \\
+   & Ejemplo 2: \lstinline{kill -9 PID} - Forzado. \\
+   & Ejemplo 3: \lstinline{kill -l} - Lista señales. \\
+   & Error común: "No such process" - Identificar: "no such". Solución: ps para PID. \\
+\midrule
+pkill & Mata por nombre. Qué es: Killer por nombre. Qué hace: Termina basados en nombre. \\
+   & Ejemplo 1: \lstinline{pkill firefox} - Mata firefox. \\
+   & Ejemplo 2: \lstinline{pkill -u user proc} - Por user. \\
+   & Error común: Mata equivocado - Identificar: Procesos equivocados terminados. Solución: pgrep primero. \\
+\midrule
+pgrep & Busca PID por nombre. Qué es: Buscador PID. Qué hace: Encuentra IDs. \\
+   & Ejemplo 1: \lstinline{pgrep sshd} - PID sshd. \\
+   & Ejemplo 2: \lstinline{pgrep -l apache} - Con nombre. \\
+   & Error común: No encontrado - Identificar: Salida vacía. Solución: Nombre correcto. \\
+\midrule
+htop & Top mejorado. Qué es: Monitor avanzado. Qué hace: Interfaz interactiva. \\
+   & Ejemplo 1: \lstinline{htop} - Lanzar. \\
+   & Ejemplo 2: \lstinline{htop -u user} - User. \\
+   & Error común: "command not found" - Identificar: "not found". Solución: sudo apt install htop. \\
+\midrule
+ping & Prueba conectividad. Qué es: Tester red. Qué hace: Envía paquetes. \\
+   & Ejemplo 1: \lstinline{ping google.com} - Infinito. \\
+   & Ejemplo 2: \lstinline{ping -c 4 8.8.8.8} - 4 paquetes. \\
+   & Error común: "Destination unreachable" - Identificar: "unreachable". Solución: Ver red/firewall. \\
+\midrule
+ss & Estadísticas sockets. Qué es: Reemplazo netstat. Qué hace: Muestra puertos. \\
+   & Ejemplo 1: \lstinline{ss -tuln} - Puertos escuchando. \\
+   & Ejemplo 2: \lstinline{ss -p} - Con procesos. \\
+   & Error común: No salida - Identificar: Vacío. Solución: sudo para detalles. \\
+\midrule
+ip & Maneja IP. Qué es: Gestor red. Qué hace: Muestra/configura IPs/rutas. \\
+   & Ejemplo 1: \lstinline{ip addr show} - IPs. \\
+   & Ejemplo 2: \lstinline{ip route} - Rutas. \\
+   & Error común: "not permitted" - Identificar: "not permitted". Solución: sudo. \\
+\midrule
+at & Programa ejecución futura. Qué es: Scheduler. Qué hace: Ejecuta comandos en tiempo específico. \\
+   & Ejemplo 1: \lstinline{at 6pm Friday miscript} - Ejecuta script a las 6pm viernes (tutorial0). \\
+   & Ejemplo 2: \lstinline{at -l} - Lista jobs. \\
+   & Ejemplo 3: \lstinline{at -r job} - Elimina. \\
+   & Error común: "command not found" - Identificar: "not found". Solución: sudo apt install at. \\
+\bottomrule
+\end{longtable}
+
+\newpage
+
+\section{Sección III: Programación Shell (Bash Scripting)}
+
+Fundamentos de scripting en Bash, extendido con variables, funciones, alias de tutorial0.
+
+\subsection{Estructura de un script}
+
+El shebang indica el intérprete. Extendida con set, trap, comentarios.
+
+\begin{codeblock}[Estructura básica]
+#!/bin/bash
+# Comentario descriptivo
+set -euo pipefail  # Mejores prácticas
+echo "Inicio"
+trap 'echo "Error"' ERR
+exit 0
+\end{codeblock}
+
+Ejemplo extendido:
+
+\begin{codeblock}
+#!/bin/sh
+# Script backup de tutorial0
+fecha=`date +%Y%m%d`
+echo "---------- Haciendo Tar -----------"
+tar cvf backup$fecha.tar prog_dir1 prog_dir2
+echo "----------- Comprimiendo -----------"
+bzip2 backup$fecha.tar
+echo "---------- Enviándolos a zip -------"
+cp ./backup$fecha.tar /mnt/zipdrive
+echo "----------- Limpiando --------------"
+rm -f ./backup$fecha.tar
+echo "----------- Final      -------------"
+\end{codeblock}
+
+\subsection{Uso de variables y paso de argumentos}
+
+Variables: Asignación, export. Paso: $1, $2, $@. Extendida con read, alias.
+
+Ejemplo:
+
+\begin{codeblock}
+#!/bin/bash
+var="valor"
+echo $var
+export VAR="ambiente"
+echo $VAR
+fecha=$(date +%Y%m%d) # Como en tutorial0
+echo $fecha
+read -p "Input: " input
+echo $input
+echo "Arg1: $1"
+echo "Todos: $@"
+\end{codeblock}
+
+Alias:
+
+\begin{codeblock}
+alias md='mkdir' # Como en tutorial0
+alias tbz2='tar -cv --use-compress-program=bzip2 -f'
+\end{codeblock}
+
+\subsection{Estructuras de control}
+
+If-else, for, while. Extendida con case, until, funciones.
+
+\begin{codeblock}[If-else]
+if [ $1 -gt 10 ]; then
+  echo "Grande"
+else
+  echo "Pequeño"
+fi
+\end{codeblock}
+
+\begin{codeblock}[For]
+for i in {1..5}; do
+  echo $i
+done
+\end{codeblock}
+
+\begin{codeblock}[While]
+count=0
+while [ $count -lt 5 ]; do
+  echo $count
+  ((count++))
+done
+\end{codeblock}
+
+Case:
+
+\begin{codeblock}
+case $1 in
+  yes) echo "Si";;
+  *) echo "No";;
+esac
+\end{codeblock}
+
+Funciones:
+
+\begin{codeblock}
+function greet {
+  echo "Hola $1"
+}
+greet "Mundo"
+\end{codeblock}
+
+\subsection{Creación de un script funcional}
+
+Backup automatizado (de tutorial0):
+
+\begin{codeblock}[backup_automatizado.sh]
+#!/bin/bash
+set -euo pipefail
+src=$1
+dest=$2
+date=$(date +%Y%m%d)
+tar -cv --use-compress-program=bzip2 -f backup_$date.tar.bz2 $src
+cp backup_$date.tar.bz2 $dest
+rm backup_$date.tar.bz2
+echo "Backup completado"
+\end{codeblock}
+
+Instalador de paquetes:
+
+\begin{codeblock}[instalador.sh]
+#!/bin/bash
+apt update
+apt install vim htop tree git
+echo "Instalado"
+\end{codeblock}
+
+Logger:
+
+\begin{codeblock}[logger.sh]
+#!/bin/bash
+echo "$(date): $@" >> log.txt
+\end{codeblock}
+
+Monitor disco:
+
+\begin{codeblock}[monitor.sh]
+#!/bin/bash
+df -h | mail -s "Disco" admin@example.com
+\end{codeblock}
+
+\subsection{Otras extensiones}
+
+Alias y variables de entorno de tutorial0:
+
+\begin{codeblock}
+export PATH=$PATH:/ruta/nueva # Añadir a PATH
+alias ll='ls -l' # Alias común
+\end{codeblock}
+
+\newpage
+
+\section{Sección IV: Guía de Diagnóstico (Errores Comunes)}
+
+Errores típicos investigados de fuentes confiables (tutorial0, Tecmint, nixCraft, Stack Overflow).
+
+\subsection{Errores en Sección I}
+
+1. Permission denied (nixCraft): ID: "denied". Sol: sudo/chmod.  
+2. Command not found (Tecmint): ID: "not found". Sol: PATH/tipografía.  
+3. No such file or directory (StackOverflow): ID: "no such". Sol: rutas absolutas.  
+4. Directory not empty (tutorial0): ID: "not empty". Sol: rm -r.  
+5. Borrado accidental (nixCraft): ID: Archivos perdidos. Sol: alias rm='rm -i'.
+
+\subsection{Errores en Sección II}
+
+1. Operation not permitted (StackOverflow): ID: "not permitted". Sol: sudo.  
+2. No matches found (Tecmint): ID: Vacío. Sol: patrón/-i.  
+3. Killed (nixCraft): ID: "Killed". Sol: RAM/top.  
+4. Connection refused (tutorial0): ID: "refused". Sol: firewall/servicio.  
+5. Syntax error (StackOverflow): ID: "syntax". Sol: comillas.
+
+\subsection{Errores en Sección III}
+
+1. Unexpected EOF (StackOverflow): ID: "EOF". Sol: cerrar fi/do.  
+2. Command not found (Tecmint): ID: "not found". Sol: ruta absoluta.  
+3. Integer expression expected (nixCraft): ID: "expected". Sol: [[ ]]/chequeo.  
+4. Unbound variable (StackOverflow): ID: "unbound". Sol: set -u/default.  
+5. Infinite loop (tutorial0): ID: Bucle. Sol: condición salida.
+
+\newpage
+
+\section{Sección V: Tuberías y Redireccionamientos}
+
+En Linux "todo es un flujo de datos": comandos reciben datos por stdin, envían por stdout y errores por stderr. Analogy: Río con entrada (stdin), salida limpia (stdout), desechos (stderr).
+
+\subsection{Conceptos}
+
+- Standard Input (stdin): Entrada (fd 0).  
+- Standard Output (stdout): Salida normal (fd 1).  
+- Standard Error (stderr): Errores (fd 2).  
+
+\subsection{Operadores}
+
+- | : Pipe (stdout → stdin)  
+- > : Sobrescribir stdout en archivo  
+- >> : Añadir stdout  
+- 2> : Redirigir stderr  
+- < : stdin desde archivo  
+- 2>&1 : stderr a stdout  
+
+\subsection{Ejemplos obligatorios}
+
+1. Filtro combinado:
+
+\begin{codeblock}
+ls -l | grep "documento.txt"
+\end{codeblock}
+
+2. Conteo y ordenamiento:
+
+\begin{codeblock}
+cat texto.txt | sort | uniq | wc -l
+\end{codeblock}
+
+3. Registro de errores:
+
+\begin{codeblock}
+ls /carpeta_inexistente 2> errores.log
+\end{codeblock}
+
+\subsection{Ejemplos adicionales}
+
+\begin{codeblock}
+ls /usr/bin | more  # Pipe a pager (tutorial0)
+\end{codeblock}
+
+\begin{codeblock}
+ncftp < entrada  # Redir input (tutorial0)
+\end{codeblock}
+
+\begin{codeblock}
+ls [iI]* > listado.txt  # Redir output (tutorial0)
+\end{codeblock}
+
+\begin{codeblock}
+ls /bin > list_bin.txt 2>&1  # Combinado
+\end{codeblock}
+
+\begin{codeblock}
+echo "add" >> log.txt  # Añadir
+\end{codeblock}
+
+\newpage
+
+\section{Anexo de Transparencia IA}
+
+\begin{longtable}{p{4cm} p{8cm} p{4cm}}
+\toprule
+IA utilizada & Prompt (instrucción) exacto enviado a la IA & Parte del manual generada o corregida por la IA \\
+\midrule
+Grok by xAI & Generar un manual técnico de administración Linux en LaTex (con un aproximado de 20 páginas) basado en las instrucciones del documento adjunto que se llama "Tarea1.pdf". Quiero que te bases tambien en ambos pdf´s que te voy a mandar, junto con un archivo word y un enlace de internet. Hazlo como dice el texto, al pie de la letra, crea las secciones y sus subsecciones en donde en algunos casos pide dar ejemplos y otras cosas mas, ademas que hay unos puntos que son obligatorios, tenlo en cuenta. Tiene que estar dividido en cinco secciones princpales cada comando mencionado debe de incluir una descripción breve sobre que es, que hace y 2 o mas ejemplos prácticos de su debido uso correcto y algun que otro weeoe común que se suele cometer. Bien, ahora las secciones son 5 como ya te lo mencioné: 1) Sección I: Comandos Basicos (Navegacion y archivos)
+
+Aqui quiero que des mencion de "Gestión de directorios" (ls, cd, mkdir, pwd, y no te quedes con eso no mas, extiendelo lo mas posible dentro de lo que entraria en esta categoria de Gestion de directorios). Tambien quiero que des mencion a la "Manipulación de archivos" (cp, mv, rm, touch, cat, y no te quedes con eso no mas, extiendelo lo mas posible dentro de lo que entraria en esta categoria de Manipulacion de archivos). Da mencion a todos sus extenciones y haz lo mismo con las otras secciones. Ademas tambien investiga en internet y saca de los 4 documentos adjuntos informacion que sean útiles para este formulario de Linux, quiero que sea perfecto, hazlo lo mejor posible y con los requisitos dados. & El manual completo fue generado, extendido y corregida por la IA, incorporando contenido de tutorial0.pdf de Fing para detalles como vi, montaje, scripting backup, alias, pipes y errores comunes. \\
+\bottomrule
+\end{longtable}
+
+\end{document}
